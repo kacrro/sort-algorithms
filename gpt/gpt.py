@@ -32,7 +32,7 @@ class SortVisualizer:
             y0 = y1 - (h / MAX_HEIGHT) * self.height
 
             bar = self.canvas.create_rectangle(x0, y0, x1, y1,
-                                               fill="green", outline="green")
+                                               fill="#03a609", outline="#03a609")
             txt = self.canvas.create_text((x0+x1)/2, y0 - 10,
                                           text=str(h), fill="white", font=("Arial", 8))
             self.bars.append(bar)
@@ -45,7 +45,7 @@ class SortVisualizer:
                           ("MergeSort",  self.start_merge),
                           ("QuickSort",  self.start_quick),
                           ("BucketSort", self.start_bucket)]:
-            btn = tk.Button(frame, text=name, bg="green", fg="black",
+            btn = tk.Button(frame, text=name, bg="#03a609", fg="black",
                             command=cmd, width=10)
             btn.pack(side=tk.LEFT, padx=5)
 
@@ -96,7 +96,7 @@ class SortVisualizer:
                 self.highlight(j, "white")
                 if self.data[j] > self.data[j+1]:
                     self.swap_bars(j, j+1)
-                self.highlight(j, "green")
+                self.highlight(j, "#03a609")
 
     # --- MergeSort ---
     def start_merge(self):
@@ -132,7 +132,7 @@ class SortVisualizer:
                 self.canvas.itemconfig(self.texts[k], text=str(h))
                 self.canvas.update()
                 # time.sleep(DELAY)
-                self.highlight(k, "green")
+                self.highlight(k, "#03a609")
 
     # --- QuickSort ---
     def start_quick(self):
@@ -155,9 +155,9 @@ class SortVisualizer:
             if self.data[j] < pivot:
                 self.swap_bars(i, j)
                 i += 1
-            self.highlight(j, "green")
+            self.highlight(j, "#03a609")
         self.swap_bars(i, high)
-        self.highlight(high, "green")
+        self.highlight(high, "#03a609")
         return i
 
     # --- BucketSort ---
@@ -174,7 +174,7 @@ class SortVisualizer:
             self.highlight(idx, "white")
             b = min(v * bucket_count // (MAX_HEIGHT+1), bucket_count-1)
             buckets[b].append(v)
-            self.highlight(idx, "green")
+            self.highlight(idx, "#03a609")
         # sort each bucket and rebuild
         k = 0
         for b in buckets:
@@ -194,7 +194,7 @@ class SortVisualizer:
                 self.canvas.itemconfig(self.texts[k], text=str(v))
                 self.canvas.update()
                 # time.sleep(DELAY)
-                self.highlight(k, "green")
+                self.highlight(k, "#03a609")
                 k += 1
 
 if __name__ == "__main__":
