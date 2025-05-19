@@ -4,15 +4,15 @@ import time
 
 BAR_COUNT = 50
 MAX_HEIGHT = 100
-DELAY = 0.001  # sekundy
-
+DELAY = 0.01  # sekundy
+SPACING = 2  # px odstępu między słupkami
 
 class BubbleSortApp:
     def __init__(self, master):
         self.master = master
         master.title("Bubble Sort Visualizer")
         self.width = 800
-        self.height = 400
+        self.height = 600
 
         # Canvas
         self.canvas = tk.Canvas(master, width=self.width, height=self.height, bg="black")
@@ -20,17 +20,27 @@ class BubbleSortApp:
 
         # generate data
         self.data = [random.randint(1, MAX_HEIGHT) for _ in range(BAR_COUNT)]
-        self.bar_width = self.width / BAR_COUNT
+        total_unit = self.width / BAR_COUNT
+        self.bar_width = total_unit - SPACING
 
-        # Draw initial bars
-        self.bars = []
+        # Draw initial bars + texts
+        self.bars  = []
+        self.texts = []
         for i, h in enumerate(self.data):
-            x0 = i * self.bar_width
-            y0 = self.height - (h / MAX_HEIGHT) * self.height
-            x1 = (i + 1) * self.bar_width
+            x0 = i * total_unit + SPACING/2
+            x1 = x0 + self.bar_width
             y1 = self.height
-            bar = self.canvas.create_rectangle(x0, y0, x1, y1, fill="green", outline="green")
+            y0 = y1 - (h / MAX_HEIGHT) * self.height
+            # słupek
+            bar = self.canvas.create_rectangle(x0, y0, x1, y1,
+                                               fill="green", outline="green")
+            # wartość nad słupkiem
+            txt = self.canvas.create_text(
+                (x0+x1)/2, y0 - 10,
+                text=str(h), fill="white", font=("Arial", 8)
+            )
             self.bars.append(bar)
+            self.texts.append(txt)
 
         # Sort button
         btn = tk.Button(master, text="Sortuj", bg="green", fg="black",
@@ -39,45 +49,52 @@ class BubbleSortApp:
 
     def start_sort(self):
         # wyłącz przycisk, żeby nie klikać w trakcie
-        for widget in self.master.winfo_children():
-            if isinstance(widget, tk.Button):
-                widget.config(state=tk.DISABLED)
+        for w in self.master.winfo_children():
+            if isinstance(w, tk.Button):
+                w.config(state=tk.DISABLED)
         self.bubble_sort()
 
     def bubble_sort(self):
         n = len(self.data)
+        total_unit = self.width / BAR_COUNT
+
         for i in range(n):
             for j in range(0, n - i - 1):
                 # podświetl aktualny słupek
-                self.canvas.itemconfig(self.bars[j], fill="white", outline="white")
+                self.canvas.itemconfig(self.bars[j],  fill="white", outline="white")
+                self.canvas.itemconfig(self.texts[j], fill="white")
                 self.canvas.update()
                 time.sleep(DELAY)
 
                 if self.data[j] > self.data[j + 1]:
-                    # zamień wartości w liście
+                    # zamiana w liście
                     self.data[j], self.data[j + 1] = self.data[j + 1], self.data[j]
-                    # zamień słupki na ekranie
-                    x0 = j * self.bar_width
-                    x1 = (j + 1) * self.bar_width
-                    # przesunięcie wysokości
-                    h0 = self.data[j]
-                    h1 = self.data[j + 1]
-                    y0_0 = self.height - (h0 / MAX_HEIGHT) * self.height
-                    y0_1 = self.height - (h1 / MAX_HEIGHT) * self.height
-                    # update obu prostokątów
-                    self.canvas.coords(self.bars[j], x0, y0_0, x0 + self.bar_width, self.height)
-                    self.canvas.coords(self.bars[j + 1], x1, y0_1, x1 + self.bar_width, self.height)
+
+                    # oblicz nowe współrzędne i wartości
+                    for idx in (j, j+1):
+                        h = self.data[idx]
+                        x0 = idx * total_unit + SPACING/2
+                        x1 = x0 + self.bar_width
+                        y1 = self.height
+                        y0 = y1 - (h / MAX_HEIGHT) * self.height
+
+                        # aktualizuj słupek
+                        self.canvas.coords(self.bars[idx], x0, y0, x1, y1)
+                        # aktualizuj tekst
+                        self.canvas.coords(self.texts[idx], (x0+x1)/2, y0 - 10)
+                        self.canvas.itemconfig(self.texts[idx], text=str(h))
+
                     self.canvas.update()
                     time.sleep(DELAY)
 
                 # przywróć zielony kolor
-                self.canvas.itemconfig(self.bars[j], fill="green", outline="green")
+                self.canvas.itemconfig(self.bars[j],  fill="green", outline="green")
+                self.canvas.itemconfig(self.texts[j], fill="white")
 
         # po zakończeniu włącz przycisk
-        for widget in self.master.winfo_children():
-            if isinstance(widget, tk.Button):
-                widget.config(state=tk.NORMAL)
-
+        for w in self.master.winfo_children():
+            if isinstance(w, tk.Button):
+                w.config(state=tk.NORMAL)
 
 if __name__ == "__main__":
     root = tk.Tk()
