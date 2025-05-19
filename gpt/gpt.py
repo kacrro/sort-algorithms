@@ -65,7 +65,7 @@ class SortVisualizer:
         self.canvas.itemconfig(self.bars[idx],  fill=color, outline=color)
         self.canvas.itemconfig(self.texts[idx], fill=color)
         self.canvas.update()
-        time.sleep(DELAY)
+        # time.sleep(DELAY)
 
     def swap_bars(self, i, j):
         # swap data
@@ -81,7 +81,7 @@ class SortVisualizer:
             self.canvas.coords(self.texts[idx], (x0+x1)/2, y0 - 10)
             self.canvas.itemconfig(self.texts[idx], text=str(h))
         self.canvas.update()
-        time.sleep(DELAY)
+        # time.sleep(DELAY)
 
     # --- BubbleSort ---
     def start_bubble(self):
@@ -131,7 +131,7 @@ class SortVisualizer:
                 self.canvas.coords(self.texts[k], (x0+x1)/2, y0 - 10)
                 self.canvas.itemconfig(self.texts[k], text=str(h))
                 self.canvas.update()
-                time.sleep(DELAY)
+                # time.sleep(DELAY)
                 self.highlight(k, "green")
 
     # --- QuickSort ---
@@ -193,7 +193,7 @@ class SortVisualizer:
                 self.canvas.coords(self.texts[k], (x0+x1)/2, y0 - 10)
                 self.canvas.itemconfig(self.texts[k], text=str(v))
                 self.canvas.update()
-                time.sleep(DELAY)
+                # time.sleep(DELAY)
                 self.highlight(k, "green")
                 k += 1
 

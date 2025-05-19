@@ -181,7 +181,7 @@ class WizualizacjaSlupkow:
                 # Zaznaczenie aktualnie porównywanych słupków
                 self.aktywne_slupki = [j, j + 1]
                 self.rysuj()
-                time.sleep(0.02)
+                #time.sleep(0.02)
 
                 # Porównanie elementów
                 if self.wartosci[j] > self.wartosci[j + 1]:
@@ -190,7 +190,7 @@ class WizualizacjaSlupkow:
 
                     # Wyświetlenie aktualnego stanu
                     self.rysuj()
-                    time.sleep(0.01)
+                    #time.sleep(0.01)
 
         # Wyczyszczenie aktywnych słupków po zakończeniu sortowania
         self.aktywne_slupki = []
@@ -228,7 +228,7 @@ class WizualizacjaSlupkow:
             # Zaznaczenie aktualnie porównywanych elementów
             self.aktywne_slupki = [start + i, mid + 1 + j]
             self.rysuj()
-            time.sleep(0.2)
+            #time.sleep(0.2)
 
             if L[i] <= R[j]:
                 arr[k] = L[i]
@@ -240,7 +240,7 @@ class WizualizacjaSlupkow:
 
             # Wyświetlenie aktualnego stanu
             self.rysuj()
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
         # Kopiowanie pozostałych elementów z L lub R
         while i < len(L):
@@ -248,14 +248,14 @@ class WizualizacjaSlupkow:
             i += 1
             k += 1
             self.rysuj()
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
         while j < len(R):
             arr[k] = R[j]
             j += 1
             k += 1
             self.rysuj()
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
     def sortuj_mergesort(self):
         if self.sortowanie_aktywne:
@@ -288,7 +288,7 @@ class WizualizacjaSlupkow:
             # Zaznaczenie aktualnie porównywanych elementów
             self.aktywne_slupki = [j, high]  # j i pivot
             self.rysuj()
-            time.sleep(0.2)
+            #time.sleep(0.2)
 
             # Jeśli bieżący element jest mniejszy lub równy pivot
             if arr[j] <= pivot:
@@ -298,7 +298,7 @@ class WizualizacjaSlupkow:
                 # Wyświetlenie aktualnego stanu po zamianie
                 self.aktywne_slupki = [i, j]
                 self.rysuj()
-                time.sleep(0.1)
+                #time.sleep(0.1)
 
         # Zamiana pivota z elementem na pozycji i+1
         arr[i + 1], arr[high] = arr[high], arr[i + 1]
@@ -306,7 +306,7 @@ class WizualizacjaSlupkow:
         # Wyświetlenie aktualnego stanu po zamianie pivota
         self.aktywne_slupki = [i + 1, high]
         self.rysuj()
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
         return i + 1
 
@@ -363,7 +363,7 @@ class WizualizacjaSlupkow:
             # Zaznaczenie aktualnego elementu
             self.aktywne_slupki = [i]
             self.rysuj()
-            time.sleep(0.2)
+            #time.sleep(0.2)
 
             # Oblicz indeks kubełka
             idx = math.floor((self.wartosci[i] / max_val) * (num_buckets - 1))
@@ -371,7 +371,7 @@ class WizualizacjaSlupkow:
 
             # Wyświetlenie aktualnego stanu
             self.rysuj()
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
         # Sortujemy kubełki i łączymy je
         k = 0
@@ -386,7 +386,7 @@ class WizualizacjaSlupkow:
                 # Zaznaczenie aktualnego elementu
                 self.aktywne_slupki = [k]
                 self.rysuj()
-                time.sleep(0.1)
+                #time.sleep(0.1)
 
                 k += 1
 
