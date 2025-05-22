@@ -1,4 +1,4 @@
-#!/Users/kacrro/PycharmProjects/sort-algorithms/.venv/bin/python3
+#!/Users/kacrro/PycharmProjects/sort-algorithms/.venv/bin/python3.13
 # -*- coding: utf-8 -*-
 import re
 import sys
