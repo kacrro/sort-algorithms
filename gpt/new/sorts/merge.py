@@ -1,6 +1,5 @@
 from .base import SortAlgorithm
 
-
 class MergeSort(SortAlgorithm):
     """Sortowanie przez scalanie."""
     name = "MergeSort"

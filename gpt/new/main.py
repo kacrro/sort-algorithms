@@ -1,5 +1,5 @@
 import tkinter as tk
-from .visualizer import SortVisualizer
+from visualizer import SortVisualizer
 
 
 def main():

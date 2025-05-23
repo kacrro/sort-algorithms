@@ -1,6 +1,5 @@
 from .base import SortAlgorithm
-
-from ..constants import Config
+from constants import Config
 
 MAX_HEIGHT = Config.MAX_HEIGHT.value
 

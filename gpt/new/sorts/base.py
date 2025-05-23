@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 
+
 class SortAlgorithm(ABC):
     """Interfejs dla algorytmów sortowania."""
     name: str

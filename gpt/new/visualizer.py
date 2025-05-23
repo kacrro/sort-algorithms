@@ -1,10 +1,10 @@
 import tkinter as tk
 import random
-from .constants import Config
-from .sorts.bubble import BubbleSort
-from .sorts.merge import MergeSort
-from .sorts.quick import QuickSort
-from .sorts.bucket import BucketSort
+from constants import Config
+from sorts.bubble import BubbleSort
+from sorts.merge import MergeSort
+from sorts.quick import QuickSort
+from sorts.bucket import BucketSort
 
 
 BAR_COUNT = Config.BAR_COUNT.value
