@@ -1,11 +1,11 @@
-import tkinter as tk
 import random
+import tkinter as tk
+
 from constants import Config
 from sorts.bubble import BubbleSort
+from sorts.bucket import BucketSort
 from sorts.merge import MergeSort
 from sorts.quick import QuickSort
-from sorts.bucket import BucketSort
-
 
 BAR_COUNT = Config.BAR_COUNT.value
 MAX_HEIGHT = Config.MAX_HEIGHT.value
