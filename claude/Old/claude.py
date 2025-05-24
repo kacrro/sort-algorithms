@@ -1,8 +1,8 @@
-import pygame
-import sys
-import time
-import math
 import copy
+import math
+import sys
+
+import pygame
 
 # Inicjalizacja Pygame
 pygame.init()
@@ -31,7 +31,7 @@ class Przycisk:
         self.rect = pygame.Rect(x, y, szerokosc, wysokosc)
         self.kolor = kolor
         self.kolor_hover = (
-            max(0, kolor[0] - 50), max(0, kolor[1] - 50), max(0, kolor[2] - 50))  # Ciemniejsza wersja koloru
+        max(0, kolor[0] - 50), max(0, kolor[1] - 50), max(0, kolor[2] - 50))  # Ciemniejsza wersja koloru
         self.tekst = tekst
         self.font = pygame.font.SysFont('Arial', 18)  # Mniejsza czcionka dla mniejszych przycisków
         self.aktywny = True
@@ -107,16 +107,12 @@ class WizualizacjaSlupkow:
         # Lista indeksów aktualnie przetwarzanych słupków
         self.aktywne_slupki = []
 
-        # Generator sortowania i flaga sortowania
-        self.generator_sortowania = None
+        # Flaga sortowania
         self.sortowanie_aktywne = False
 
     def resetuj_wartosci(self):
         self.wartosci = copy.deepcopy(self.wartosci_oryginalne)
         self.aktywne_slupki = []
-        self.generator_sortowania = None
-        self.sortowanie_aktywne = False
-        self.ustaw_nieaktywne_przyciski(True)
         self.rysuj()
 
     def rysuj(self):
@@ -165,112 +161,190 @@ class WizualizacjaSlupkow:
         for przycisk in self.przyciski:
             przycisk.aktywny = aktywny
 
-    def generator_bubblesort(self):
+    def sortuj_babelkowo(self):
+        if self.sortowanie_aktywne:
+            return
+
+        self.sortowanie_aktywne = True
+        self.ustaw_nieaktywne_przyciski(False)
+
         n = len(self.wartosci)
+
         for i in range(n):
             for j in range(0, n - i - 1):
+                # Sprawdzenie, czy aplikacja nie została zamknięta
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+
                 # Zaznaczenie aktualnie porównywanych słupków
                 self.aktywne_slupki = [j, j + 1]
-                yield  # Pauza dla wizualizacji
+                self.rysuj()
+                #time.sleep(0.02)
 
                 # Porównanie elementów
                 if self.wartosci[j] > self.wartosci[j + 1]:
                     # Zamiana elementów miejscami
                     self.wartosci[j], self.wartosci[j + 1] = self.wartosci[j + 1], self.wartosci[j]
-                    yield  # Pauza po zamianie
 
-    def generator_mergesort(self):
-        # Pomocniczy generator dla merge sort
-        yield from self._merge_sort_generator(0, len(self.wartosci) - 1)
+                    # Wyświetlenie aktualnego stanu
+                    self.rysuj()
+                    #time.sleep(0.01)
 
-    def _merge_sort_generator(self, start, end):
-        if start < end:
+        # Wyczyszczenie aktywnych słupków po zakończeniu sortowania
+        self.aktywne_slupki = []
+        self.rysuj()
+
+        self.ustaw_nieaktywne_przyciski(True)
+        self.sortowanie_aktywne = False
+
+    def merge_sort(self, arr, start, end):
+        if self.sortowanie_aktywne and start < end:
             mid = (start + end) // 2
 
             # Rekurencyjne sortowanie lewej i prawej połówki
-            yield from self._merge_sort_generator(start, mid)
-            yield from self._merge_sort_generator(mid + 1, end)
+            self.merge_sort(arr, start, mid)
+            self.merge_sort(arr, mid + 1, end)
 
             # Scalanie posortowanych połówek
-            yield from self._merge_generator(start, mid, end)
+            self.merge(arr, start, mid, end)
 
-    def _merge_generator(self, start, mid, end):
+    def merge(self, arr, start, mid, end):
         # Tworzenie kopii lewej i prawej połówki
-        L = self.wartosci[start:mid + 1]
-        R = self.wartosci[mid + 1:end + 1]
+        L = arr[start:mid + 1]
+        R = arr[mid + 1:end + 1]
 
         # Indeksy dla przechodzenia po lewej i prawej połówce
         i, j, k = 0, 0, start
 
         while i < len(L) and j < len(R):
+            # Obsługa zdarzeń
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
             # Zaznaczenie aktualnie porównywanych elementów
-            self.aktywne_slupki = [start + i, mid + 1 + j] if start + i < len(self.wartosci) and mid + 1 + j < len(
-                self.wartosci) else []
-            yield
+            self.aktywne_slupki = [start + i, mid + 1 + j]
+            self.rysuj()
+            #time.sleep(0.2)
 
             if L[i] <= R[j]:
-                self.wartosci[k] = L[i]
+                arr[k] = L[i]
                 i += 1
             else:
-                self.wartosci[k] = R[j]
+                arr[k] = R[j]
                 j += 1
             k += 1
-            yield
+
+            # Wyświetlenie aktualnego stanu
+            self.rysuj()
+            #time.sleep(0.1)
 
         # Kopiowanie pozostałych elementów z L lub R
         while i < len(L):
-            self.wartosci[k] = L[i]
+            arr[k] = L[i]
             i += 1
             k += 1
-            yield
+            self.rysuj()
+            #time.sleep(0.1)
 
         while j < len(R):
-            self.wartosci[k] = R[j]
+            arr[k] = R[j]
             j += 1
             k += 1
-            yield
+            self.rysuj()
+            #time.sleep(0.1)
 
-    def generator_quicksort(self):
-        yield from self._quick_sort_generator(0, len(self.wartosci) - 1)
+    def sortuj_mergesort(self):
+        if self.sortowanie_aktywne:
+            return
 
-    def _quick_sort_generator(self, low, high):
-        if low < high:
-            # Znajdź indeks podziału
-            pi = yield from self._partition_generator(low, high)
+        self.sortowanie_aktywne = True
+        self.ustaw_nieaktywne_przyciski(False)
 
-            # Rekurencyjne sortowanie elementów przed i po podziale
-            yield from self._quick_sort_generator(low, pi - 1)
-            yield from self._quick_sort_generator(pi + 1, high)
+        # Wywołanie merge sort
+        self.merge_sort(self.wartosci, 0, len(self.wartosci) - 1)
 
-    def _partition_generator(self, low, high):
-        pivot = self.wartosci[high]  # Wybieramy pivot jako ostatni element
+        # Wyczyszczenie aktywnych słupków po zakończeniu sortowania
+        self.aktywne_slupki = []
+        self.rysuj()
+
+        self.ustaw_nieaktywne_przyciski(True)
+        self.sortowanie_aktywne = False
+
+    def partition(self, arr, low, high):
+        pivot = arr[high]  # Wybieramy pivot jako ostatni element
         i = low - 1  # Indeks mniejszego elementu
 
         for j in range(low, high):
+            # Obsługa zdarzeń
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
             # Zaznaczenie aktualnie porównywanych elementów
             self.aktywne_slupki = [j, high]  # j i pivot
-            yield
+            self.rysuj()
+            #time.sleep(0.2)
 
             # Jeśli bieżący element jest mniejszy lub równy pivot
-            if self.wartosci[j] <= pivot:
+            if arr[j] <= pivot:
                 i += 1
-                self.wartosci[i], self.wartosci[j] = self.wartosci[j], self.wartosci[i]
+                arr[i], arr[j] = arr[j], arr[i]
 
                 # Wyświetlenie aktualnego stanu po zamianie
                 self.aktywne_slupki = [i, j]
-                yield
+                self.rysuj()
+                #time.sleep(0.1)
 
         # Zamiana pivota z elementem na pozycji i+1
-        self.wartosci[i + 1], self.wartosci[high] = self.wartosci[high], self.wartosci[i + 1]
+        arr[i + 1], arr[high] = arr[high], arr[i + 1]
 
         # Wyświetlenie aktualnego stanu po zamianie pivota
         self.aktywne_slupki = [i + 1, high]
-        yield
+        self.rysuj()
+        #time.sleep(0.1)
 
         return i + 1
 
-    def generator_bucketsort(self):
+    def quick_sort(self, arr, low, high):
+        if self.sortowanie_aktywne and low < high:
+            # Znajdź indeks podziału
+            pi = self.partition(arr, low, high)
+
+            # Rekurencyjne sortowanie elementów przed i po podziale
+            self.quick_sort(arr, low, pi - 1)
+            self.quick_sort(arr, pi + 1, high)
+
+    def sortuj_quicksort(self):
+        if self.sortowanie_aktywne:
+            return
+
+        self.sortowanie_aktywne = True
+        self.ustaw_nieaktywne_przyciski(False)
+
+        # Wywołanie quick sort
+        self.quick_sort(self.wartosci, 0, len(self.wartosci) - 1)
+
+        # Wyczyszczenie aktywnych słupków po zakończeniu sortowania
+        self.aktywne_slupki = []
+        self.rysuj()
+
+        self.ustaw_nieaktywne_przyciski(True)
+        self.sortowanie_aktywne = False
+
+    def sortuj_bucketsort(self):
+        if self.sortowanie_aktywne:
+            return
+
+        self.sortowanie_aktywne = True
+        self.ustaw_nieaktywne_przyciski(False)
+
         # Implementacja bucket sort
+        # Bucket sort wymaga znormalizowanych wartości do poprawnego działania
         n = len(self.wartosci)
         max_val = max(self.wartosci)
 
@@ -280,14 +354,24 @@ class WizualizacjaSlupkow:
 
         # Umieszczamy elementy w kubełkach
         for i in range(n):
+            # Obsługa zdarzeń
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
             # Zaznaczenie aktualnego elementu
             self.aktywne_slupki = [i]
-            yield
+            self.rysuj()
+            #time.sleep(0.2)
 
             # Oblicz indeks kubełka
-            idx = min(math.floor((self.wartosci[i] / max_val) * (num_buckets - 1)), num_buckets - 1)
+            idx = math.floor((self.wartosci[i] / max_val) * (num_buckets - 1))
             buckets[idx].append(self.wartosci[i])
-            yield
+
+            # Wyświetlenie aktualnego stanu
+            self.rysuj()
+            #time.sleep(0.1)
 
         # Sortujemy kubełki i łączymy je
         k = 0
@@ -301,13 +385,20 @@ class WizualizacjaSlupkow:
 
                 # Zaznaczenie aktualnego elementu
                 self.aktywne_slupki = [k]
-                yield
+                self.rysuj()
+                #time.sleep(0.1)
 
                 k += 1
 
+        # Wyczyszczenie aktywnych słupków po zakończeniu sortowania
+        self.aktywne_slupki = []
+        self.rysuj()
+
+        self.ustaw_nieaktywne_przyciski(True)
+        self.sortowanie_aktywne = False
+
     def uruchom(self):
         running = True
-        krok_co_klatek = 0  # Licznik dla spowolnienia animacji
 
         while running:
             for event in pygame.event.get():
@@ -317,44 +408,37 @@ class WizualizacjaSlupkow:
                     # Sprawdzenie kliknięć przycisków
                     if not self.sortowanie_aktywne:
                         if self.przycisk_bubblesort.sprawdz_klikniecie(event.pos):
-                            self.generator_sortowania = self.generator_bubblesort()
-                            self.sortowanie_aktywne = True
-                            self.ustaw_nieaktywne_przyciski(False)
+                            import threading
+                            watek_sortowania = threading.Thread(target=self.sortuj_babelkowo)
+                            watek_sortowania.daemon = True
+                            watek_sortowania.start()
                         elif self.przycisk_mergesort.sprawdz_klikniecie(event.pos):
-                            self.generator_sortowania = self.generator_mergesort()
-                            self.sortowanie_aktywne = True
-                            self.ustaw_nieaktywne_przyciski(False)
+                            import threading
+                            watek_sortowania = threading.Thread(target=self.sortuj_mergesort)
+                            watek_sortowania.daemon = True
+                            watek_sortowania.start()
                         elif self.przycisk_quicksort.sprawdz_klikniecie(event.pos):
-                            self.generator_sortowania = self.generator_quicksort()
-                            self.sortowanie_aktywne = True
-                            self.ustaw_nieaktywne_przyciski(False)
+                            import threading
+                            watek_sortowania = threading.Thread(target=self.sortuj_quicksort)
+                            watek_sortowania.daemon = True
+                            watek_sortowania.start()
                         elif self.przycisk_bucketsort.sprawdz_klikniecie(event.pos):
-                            self.generator_sortowania = self.generator_bucketsort()
-                            self.sortowanie_aktywne = True
-                            self.ustaw_nieaktywne_przyciski(False)
+                            import threading
+                            watek_sortowania = threading.Thread(target=self.sortuj_bucketsort)
+                            watek_sortowania.daemon = True
+                            watek_sortowania.start()
 
                     # Przycisk resetowania - działa nawet podczas sortowania
                     if self.przycisk_reset.sprawdz_klikniecie(event.pos):
                         self.resetuj_wartosci()
-
-            # Wykonaj krok sortowania jeśli jest aktywne
-            if self.sortowanie_aktywne and self.generator_sortowania:
-                # Spowolnienie animacji - wykonuj krok co kilka klatek
-                krok_co_klatek += 1
-                if krok_co_klatek >= 3:  # Co 3 klatki wykonaj krok
-                    krok_co_klatek = 0
-                    try:
-                        next(self.generator_sortowania)
-                    except StopIteration:
-                        # Sortowanie zakończone
-                        self.aktywne_slupki = []
-                        self.generator_sortowania = None
                         self.sortowanie_aktywne = False
                         self.ustaw_nieaktywne_przyciski(True)
 
-            # Rysowanie
-            self.rysuj()
-            self.clock.tick(60)  # 60 FPS
+            # Rysowanie tylko gdy potrzebne
+            if not self.sortowanie_aktywne:
+                self.rysuj()
+
+            self.clock.tick(30)  # Zmniejszenie FPS dla lepszej wydajności
 
         pygame.quit()
         sys.exit()

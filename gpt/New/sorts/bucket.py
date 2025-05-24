@@ -1,6 +1,13 @@
-from .base import SortAlgorithm
-from constants import Config
+from enum import Enum
 
+from .base import SortAlgorithm
+
+
+class Config(Enum):
+    BAR_COUNT = 50  # liczba słupków
+    MAX_HEIGHT = 100  # maksymalna wysokość słupka
+    DELAY = 0.02  # opóźnienie w sekundach
+    SPACING = 2  # odstęp między słupkami w pikselach
 MAX_HEIGHT = Config.MAX_HEIGHT.value
 
 
