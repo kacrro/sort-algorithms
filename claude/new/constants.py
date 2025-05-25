@@ -30,8 +30,8 @@ BUTTON_HEIGHT = 40
 BUTTON_SPACING = 10
 
 # Animation settings
-ANIMATION_DELAY = 3  # Frames between animation steps
-FPS = 60
+ANIMATION_DELAY = 1  # Frames between animation steps
+FPS = 120
 
 # Font settings
 BUTTON_FONT_SIZE = 18
