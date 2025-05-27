@@ -1,6 +1,8 @@
 import random
 import tkinter as tk
 
+from my_own.done.bar_chart import draw_bars
+
 # Window parameters
 WINDOW_TITLE = "fajne oknienko do sortowania liczb"
 WINDOW_WIDTH = 800
@@ -15,7 +17,7 @@ CANVAS_HEIGHT = 400
 # Data parameters
 BAR_COUNT = 50
 a = 1
-b = 100
+b = 10
 RANGE = (a, b)
 
 
@@ -29,7 +31,7 @@ def main():
 
     # Inicjalizacja danych
     data = [random.randint(*RANGE) for _ in range(BAR_COUNT)]
-
+    draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
     window.mainloop()
 
 
