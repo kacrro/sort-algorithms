@@ -3,7 +3,6 @@ import tkinter as tk
 from bar_chart import draw_bars
 from data import generate_data
 
-
 def main():
     window = tk.Tk()
     window.title("Visualizer")

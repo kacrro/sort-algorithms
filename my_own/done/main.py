@@ -3,35 +3,40 @@ import tkinter as tk
 
 from my_own.done.bar_chart import draw_bars
 
-# Window parameters
-WINDOW_TITLE = "fajne oknienko do sortowania liczb"
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 400
-WINDOW_SIZE = f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}"
-WINDOW_BG_COLOR = "#000000"
-
-# Canvas parameters
-CANVAS_WIDTH = 800
-CANVAS_HEIGHT = 400
-
-# Data parameters
-BAR_COUNT = 50
-a = 1
-b = 10
-RANGE = (a, b)
+from my_own.done.config import WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_SIZE, WINDOW_BG_COLOR, CANVAS_WIDTH, CANVAS_HEIGHT, BAR_COUNT, RANGE
+from my_own.done.data import generate_data
 
 
 def main():
+
+    # Window
     window = tk.Tk()
     window.title(WINDOW_TITLE)
     window.geometry(WINDOW_SIZE)
 
-    canvas = tk.Canvas(window, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=WINDOW_BG_COLOR)
+    # Canvas
+    canvas = tk.Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR)
     canvas.pack()
 
-    # Inicjalizacja danych
-    data = [random.randint(*RANGE) for _ in range(BAR_COUNT)]
+    # Data
+    data = generate_data()
+
+    # EXPORT THIS FUNCTION TO data.py
+
+    def reset_data():
+        nonlocal data
+        data = generate_data()
+        canvas.delete("all")
+        draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+
+    # Reset button
+    reset_button = tk.Button(window, text="Reset", command=reset_data)
+    reset_button.pack()
+
+    # Bars
     draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+
+    # Loop
     window.mainloop()
 
 
