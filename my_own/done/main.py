@@ -1,9 +1,7 @@
-import random
 import tkinter as tk
 
 from my_own.done.bar_chart import draw_bars
-
-from my_own.done.config import WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_SIZE, WINDOW_BG_COLOR, CANVAS_WIDTH, CANVAS_HEIGHT, BAR_COUNT, RANGE
+from my_own.done.config import WINDOW_TITLE, WINDOW_SIZE, WINDOW_BG_COLOR, CANVAS_WIDTH, CANVAS_HEIGHT
 from my_own.done.data import generate_data
 
 
@@ -21,8 +19,6 @@ def main():
     # Data
     data = generate_data()
 
-    # EXPORT THIS FUNCTION TO data.py
-
     def reset_data():
         nonlocal data
         data = generate_data()
@@ -35,6 +31,9 @@ def main():
 
     # Bars
     draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+
+    # sort button
+
 
     # Loop
     window.mainloop()
