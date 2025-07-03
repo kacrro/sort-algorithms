@@ -71,7 +71,7 @@ def main():
     def merge_sort():
         return
 
-    def bucket_sort():
+    def bucket_sort(): #sth is not working in test.py working code, find whats wrong
         if not data:
             return
 
