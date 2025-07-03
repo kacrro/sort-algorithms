@@ -10,7 +10,9 @@ CANVAS_WIDTH = WINDOW_WIDTH - 20
 CANVAS_HEIGHT = WINDOW_HEIGHT - 100
 
 # Data parameters
-BAR_COUNT = 100
-a = 1
-b = 100
+BAR_COUNT = 80
+a = 1   # Minimal value for the data
+b = 100 # Maximal value for the data
 RANGE = (a, b)
+
+delay = 10  # Delay in milliseconds for the sorting animation
