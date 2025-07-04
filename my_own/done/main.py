@@ -1,10 +1,8 @@
 import tkinter as tk
 
-
 from my_own.done.bar_chart import draw_bars, draw_bars_with_highlight
 from my_own.done.config import WINDOW_TITLE, WINDOW_SIZE, WINDOW_BG_COLOR, CANVAS_WIDTH, CANVAS_HEIGHT, delay
 from my_own.done.data import generate_data
-
 
 
 def main():
@@ -98,7 +96,7 @@ def main():
             if state['phase'] == 'distribute':
                 # Phase 1: Distributing items into buckets
                 if state['current_item'] >= len(data):
-                    state['pahse']= 'sort_buckets'
+                    state['phase'] = 'sort_buckets'
                     state['current_bucket'] = 0
                     window.after(delay, sort_step)
                     return
@@ -140,7 +138,7 @@ def main():
                     return
 
                 # Collect items from the current bucket
-                if state['buckets']['current_bucket']:
+                if state['buckets'][state['current_bucket']]:
                     state['sorted_data'].extend(state['buckets'][state['current_bucket']])
 
                 # Update the data with the sorted items
