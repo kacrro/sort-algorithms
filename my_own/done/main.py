@@ -62,9 +62,93 @@ def main():
 
         sort_step()
 
-    def quick_sort():
+    def quick_sort():  # implementacja za pomoca clauda - sprawdzic i nauczyc sie
+        if not data:
+            return
 
-        return
+        # Stos do przechowywania zakresów do sortowania
+        stack = [(0, len(data) - 1)]
+
+        # Stan aktualnego partycjonowania
+        partition_state = {
+            'active': False,
+            'low': 0,
+            'high': 0,
+            'pivot_val': 0,
+            'i': 0,
+            'j': 0
+        }
+
+        def sort_step():
+            # Jeśli nie ma aktywnego partycjonowania, rozpocznij nowe
+            if not partition_state['active']:
+                if not stack:
+                    # Sortowanie zakończone
+                    draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                    return
+
+                # Pobierz następny zakres
+                low, high = stack.pop()
+
+                if low >= high:
+                    # Zakres już posortowany
+                    window.after(delay, sort_step)
+                    return
+
+                # Rozpocznij partycjonowanie
+                partition_state['active'] = True
+                partition_state['low'] = low
+                partition_state['high'] = high
+                partition_state['pivot_val'] = data[high]
+                partition_state['i'] = low - 1
+                partition_state['j'] = low
+
+                # Podświetl pivot
+                draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, high, -1)
+                window.after(delay, sort_step)
+                return
+
+            # Kontynuuj partycjonowanie
+            low = partition_state['low']
+            high = partition_state['high']
+            pivot_val = partition_state['pivot_val']
+            i = partition_state['i']
+            j = partition_state['j']
+
+            if j < high:
+                # Porównaj aktualny element z pivotem
+                if data[j] <= pivot_val:
+                    i += 1
+                    # Zamień elementy
+                    data[i], data[j] = data[j], data[i]
+                    partition_state['i'] = i
+
+                # Podświetl porównywane elementy
+                draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, j, high)
+
+                partition_state['j'] = j + 1
+                window.after(delay, sort_step)
+            else:
+                # Zakończ partycjonowanie
+                # Umieść pivot w odpowiednim miejscu
+                data[i + 1], data[high] = data[high], data[i + 1]
+                pivot_pos = i + 1
+
+                # Podświetl pivot w końcowej pozycji
+                draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, pivot_pos, -1)
+
+                # Dodaj nowe zakresy do sortowania
+                if pivot_pos - 1 > low:
+                    stack.append((low, pivot_pos - 1))
+                if pivot_pos + 1 < high:
+                    stack.append((pivot_pos + 1, high))
+
+                # Zakończ partycjonowanie
+                partition_state['active'] = False
+
+                window.after(delay, sort_step)
+
+        sort_step()
 
     def merge_sort():
         return
