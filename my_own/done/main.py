@@ -12,12 +12,35 @@ def main():
     window.title(WINDOW_TITLE)
     window.geometry(WINDOW_SIZE)
 
-    # Canvas
-    canvas = tk.Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR)
-    canvas.pack()
+    data_frame = tk.Frame(window)
+    data_frame.pack(pady=1)
+    data_frame2 = tk.Frame(window)
+    data_frame2.pack(pady=1)
 
+    border_color = "lightgreen"
+
+    # Canvas
+    canvas = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+                       highlightbackground=border_color, highlightthickness=2)
+    canvas.pack(side="right", padx=10, pady=10)
+
+    canvas2 = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+                        highlightbackground=border_color, highlightthickness=2)
+    canvas2.pack(side="right", padx=10, pady=10)
+
+    canvas3 = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+                        highlightbackground=border_color, highlightthickness=2)
+    canvas3.pack(side="right", padx=10, pady=10)
+
+    canvas4 = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+                        highlightbackground=border_color, highlightthickness=2)
+    canvas4.pack(side="right", padx=10, pady=10)
     # Data
     data = generate_data()
+    bubble_data = generate_data()
+    quick_data = generate_data()
+    merge_data = generate_data()
+    bucket_data = generate_data()
     sort_after_id = None
 
     def stop_sorting():
@@ -26,19 +49,21 @@ def main():
             window.after_cancel(sort_after_id)
             sort_after_id = None
         # data = generate_data()
-        canvas.delete("all")
-        draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
-
+        for c in (canvas, canvas2, canvas3, canvas4):
+            c.delete("all")
+            draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
     def reset_data():
         nonlocal data, sort_after_id
         stop_sorting()
+
         data = generate_data()
-        canvas.delete("all")
-        draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+        for c in (canvas, canvas2, canvas3, canvas4):
+            c.delete("all")
+            draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
     def bubble_sort():
         nonlocal sort_after_id
-        data_len = len(data)
+        data_len = len(bubble_data)
         step = [0, 0]  # [i, j] - aktualne indeksy
 
         # i - indeks iteracji (ile danych juz przerobilismy), j - indeks porównywanego elementu
@@ -46,13 +71,13 @@ def main():
 
         def sort_step():
             nonlocal sort_after_id
-            if not data:
+            if not bubble_data:
                 return
             i, j = step[0], step[1]
 
             if i >= data_len - 1:
                 # Sortowanie zakończone
-                draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                draw_bars(canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
                 return
 
             if j >= data_len - 1 - i:  # jeśli j jest większe niż długość - już posortowane to ...
@@ -62,12 +87,11 @@ def main():
                 sort_after_id = window.after(delay, sort_step)
                 return
 
-
-            if data[j] > data[j + 1]:
+            if bubble_data[j] > bubble_data[j + 1]:
                 # zmien elementy
-                data[j], data[j + 1] = data[j + 1], data[j]
+                bubble_data[j], bubble_data[j + 1] = bubble_data[j + 1], bubble_data[j]
 
-            draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, j, j + 1)
+            draw_bars_with_highlight(canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT, j, j + 1)
 
             step[1] += 1
             sort_after_id = window.after(delay, sort_step)
@@ -98,7 +122,7 @@ def main():
             if not partition_state['active']:
                 if not stack:
                     # Sortowanie zakończone
-                    draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                    draw_bars(canvas2, data, CANVAS_WIDTH, CANVAS_HEIGHT)
                     return
 
                 # Pobierz następny zakres
@@ -118,7 +142,7 @@ def main():
                 partition_state['j'] = low
 
                 # Podświetl pivot
-                draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, high, -1)
+                draw_bars_with_highlight(canvas2, data, CANVAS_WIDTH, CANVAS_HEIGHT, high, -1)
                 sort_after_id = window.after(delay, sort_step)
                 return
 
@@ -138,7 +162,7 @@ def main():
                     partition_state['i'] = i
 
                 # Podświetl porównywane elementy
-                draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, j, high)
+                draw_bars_with_highlight(canvas2, data, CANVAS_WIDTH, CANVAS_HEIGHT, j, high)
 
                 partition_state['j'] = j + 1
                 sort_after_id = window.after(delay, sort_step)
@@ -149,7 +173,7 @@ def main():
                 pivot_pos = i + 1
 
                 # Podświetl pivot w końcowej pozycji
-                draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, pivot_pos, -1)
+                draw_bars_with_highlight(canvas2, data, CANVAS_WIDTH, CANVAS_HEIGHT, pivot_pos, -1)
 
                 # Dodaj nowe zakresy do sortowania
                 if pivot_pos - 1 > low:
@@ -169,13 +193,13 @@ def main():
 
     def bucket_sort(): #sth is not working in test.py working code, find whats wrong
         nonlocal sort_after_id
-        if not data:
+        if not bucket_data:
             return
 
 
         # parameters
-        min_val = min(data)
-        max_val = max(data)
+        min_val = min(bucket_data)
+        max_val = max(bucket_data)
         bucket_count = 10
         bucket_range = (max_val - min_val) / bucket_count
 
@@ -195,13 +219,13 @@ def main():
             nonlocal sort_after_id
             if state['phase'] == 'distribute':
                 # Phase 1: Distributing items into buckets
-                if state['current_item'] >= len(data):
+                if state['current_item'] >= len(bucket_data):
                     state['phase'] = 'sort_buckets'
                     state['current_bucket'] = 0
                     sort_after_id = window.after(delay, sort_step)
                     return
                 # Determine which bucket the item belongs to
-                item = data[state['current_item']]
+                item = bucket_data[state['current_item']]
                 if item == max_val:                 # obslugujemy bo dzielimy potem przez to
                     bucket_index = bucket_count - 1
                 else:
@@ -211,7 +235,7 @@ def main():
                 state['buckets'][bucket_index].append(item)  # Add item to the bucket
 
                 # Highlight the current item being processed
-                draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, state['current_item'])
+                draw_bars_with_highlight(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT, state['current_item'])
 
                 state['current_item'] += 1
                 sort_after_id = window.after(delay, sort_step)
@@ -234,7 +258,7 @@ def main():
                 # phase 3: Collecting sorted items from buckets
                 if state['current_bucket'] >= bucket_count:
                     # All buckets processed, draw the final sorted data
-                    draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                    draw_bars(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
                     return
 
                 # Collect items from the current bucket
@@ -243,17 +267,17 @@ def main():
 
                 # Update the data with the sorted items
                 for i, val in enumerate(state['sorted_data']):
-                    if i < len(data):
-                        data[i] = val
+                    if i < len(bucket_data):
+                        bucket_data[i] = val
 
 
                 remaining_start = len(state['sorted_data'])
-                for i in range (remaining_start, len(data)):
-                    if i < len(data):
-                        data[i] = 0
+                for i in range(remaining_start, len(bucket_data)):
+                    if i < len(bucket_data):
+                        bucket_data[i] = 0
 
                 # Draw the updated bars
-                draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                draw_bars(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
                 state['current_bucket'] += 1
                 sort_after_id = window.after(delay, sort_step)
@@ -281,15 +305,20 @@ def main():
     QuickSort_button = tk.Button(sorting_frame, text="Quick Sort", command=quick_sort, bg="#008F11",
                                  state=tk.DISABLED)  # Quick Sort is not implemented yet
     QuickSort_button.pack(side=tk.LEFT, padx=5, pady=5)
+
     MergeSort_button = tk.Button(sorting_frame, text="Merge Sort", command=merge_sort, bg="#008F11",
                                  state=tk.DISABLED)  # Merge Sort is not implemented yet
     MergeSort_button.pack(side=tk.LEFT, padx=5, pady=5)
+
     BucketSort_button = tk.Button(sorting_frame, text="Bucket Sort", command=bucket_sort, bg="#008F11")
     BucketSort_button.pack(side=tk.LEFT, padx=5, pady=5)
 
 
     # Bars
-    draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
     # Loop
     window.mainloop()

@@ -1,7 +1,7 @@
 def draw_bars(canvas, data, canvas_width, canvas_height):
     canvas.delete("all")
     bar_width = canvas_width / len(data)
-    max_height = max(data) + 3 if data else 1  # Avoid division by zero
+    max_height = (max(data) + 5) if data else 1  # Avoid division by zero
 
     for i, val in enumerate(data):  # Iterate over the data
         x0 = i * bar_width + 3  # Add a small offset for better visibility
@@ -19,7 +19,7 @@ def draw_bars(canvas, data, canvas_width, canvas_height):
 def draw_bars_with_highlight(canvas, data, canvas_width, canvas_height, highlight1=-1, highlight2=-1):
     canvas.delete("all")
     bar_width = canvas_width / len(data)
-    max_height = max(data) + 3 if data else 1
+    max_height = (max(data) + 5) if data else 1
 
     for i, val in enumerate(data):
         x0 = i * bar_width + 3
