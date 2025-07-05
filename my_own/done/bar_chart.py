@@ -24,7 +24,7 @@ def draw_bars_with_highlight(canvas, data, canvas_width, canvas_height, highligh
     for i, val in enumerate(data):
         x0 = i * bar_width + 3
         y0 = canvas_height - (val / max_height) * canvas_height
-        x1 = (i + 1) * bar_width
+        x1 = (i + 1) * bar_width -3
         y1 = canvas_height
 
         # Wybierz kolor słupka

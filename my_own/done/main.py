@@ -49,17 +49,29 @@ def main():
             window.after_cancel(sort_after_id)
             sort_after_id = None
         # data = generate_data()
-        for c in (canvas, canvas2, canvas3, canvas4):
-            c.delete("all")
-            draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+        # for c in (canvas, canvas2, canvas3, canvas4):
+        #     c.delete("all")
+        #     draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
     def reset_data():
-        nonlocal data, sort_after_id
+        nonlocal bubble_data, quick_data, merge_data, bucket_data, sort_after_id
         stop_sorting()
 
         data = generate_data()
+        bubble_data = generate_data()
+        quick_data = generate_data()
+        merge_data = generate_data()
+        bucket_data = generate_data()
         for c in (canvas, canvas2, canvas3, canvas4):
             c.delete("all")
             draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+
+    def start_all_sorts():
+        bubble_sort()
+        quick_sort()
+        bucket_sort()
+
+    # Buttons
+
 
     def bubble_sort():
         nonlocal sort_after_id
@@ -100,11 +112,11 @@ def main():
 
     def quick_sort():  # implementacja za pomoca clauda - sprawdzic i nauczyc sie
         nonlocal sort_after_id
-        if not data:
+        if not quick_data:
             return
 
         # Stos do przechowywania zakresów do sortowania
-        stack = [(0, len(data) - 1)]
+        stack = [(0, len(quick_data) - 1)]
 
         # Stan aktualnego partycjonowania
         partition_state = {
@@ -122,7 +134,7 @@ def main():
             if not partition_state['active']:
                 if not stack:
                     # Sortowanie zakończone
-                    draw_bars(canvas2, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                    draw_bars(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT)
                     return
 
                 # Pobierz następny zakres
@@ -137,12 +149,12 @@ def main():
                 partition_state['active'] = True
                 partition_state['low'] = low
                 partition_state['high'] = high
-                partition_state['pivot_val'] = data[high]
+                partition_state['pivot_val'] = quick_data[high]
                 partition_state['i'] = low - 1
                 partition_state['j'] = low
 
                 # Podświetl pivot
-                draw_bars_with_highlight(canvas2, data, CANVAS_WIDTH, CANVAS_HEIGHT, high, -1)
+                draw_bars_with_highlight(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, high, -1)
                 sort_after_id = window.after(delay, sort_step)
                 return
 
@@ -155,25 +167,25 @@ def main():
 
             if j < high:
                 # Porównaj aktualny element z pivotem
-                if data[j] <= pivot_val:
+                if quick_data[j] <= pivot_val:
                     i += 1
                     # Zamień elementy
-                    data[i], data[j] = data[j], data[i]
+                    quick_data[i], quick_data[j] = quick_data[j], quick_data[i]
                     partition_state['i'] = i
 
                 # Podświetl porównywane elementy
-                draw_bars_with_highlight(canvas2, data, CANVAS_WIDTH, CANVAS_HEIGHT, j, high)
+                draw_bars_with_highlight(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, j, high)
 
                 partition_state['j'] = j + 1
                 sort_after_id = window.after(delay, sort_step)
             else:
                 # Zakończ partycjonowanie
                 # Umieść pivot w odpowiednim miejscu
-                data[i + 1], data[high] = data[high], data[i + 1]
+                quick_data[i + 1], quick_data[high] = quick_data[high], quick_data[i + 1]
                 pivot_pos = i + 1
 
                 # Podświetl pivot w końcowej pozycji
-                draw_bars_with_highlight(canvas2, data, CANVAS_WIDTH, CANVAS_HEIGHT, pivot_pos, -1)
+                draw_bars_with_highlight(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, pivot_pos, -1)
 
                 # Dodaj nowe zakresy do sortowania
                 if pivot_pos - 1 > low:
@@ -302,8 +314,8 @@ def main():
     BubbleSort_button = tk.Button(sorting_frame, text="Bubble Sort", command=bubble_sort, bg="#008F11")
     BubbleSort_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-    QuickSort_button = tk.Button(sorting_frame, text="Quick Sort", command=quick_sort, bg="#008F11",
-                                 state=tk.DISABLED)  # Quick Sort is not implemented yet
+    QuickSort_button = tk.Button(sorting_frame, text="Quick Sort", command=quick_sort,
+                                 bg="#008F11")  # Quick Sort is not understood yet
     QuickSort_button.pack(side=tk.LEFT, padx=5, pady=5)
 
     MergeSort_button = tk.Button(sorting_frame, text="Merge Sort", command=merge_sort, bg="#008F11",
@@ -313,12 +325,14 @@ def main():
     BucketSort_button = tk.Button(sorting_frame, text="Bucket Sort", command=bucket_sort, bg="#008F11")
     BucketSort_button.pack(side=tk.LEFT, padx=5, pady=5)
 
+    All_button = tk.Button(manipulation_frame, text="All", command=start_all_sorts, bg="#008F11")
+    All_button.pack(side=tk.LEFT, padx=5, pady=5)
 
     # Bars
     draw_bars(canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
     draw_bars(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT)
     draw_bars(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
-    draw_bars(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    # draw_bars(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
     # Loop
     window.mainloop()
