@@ -18,14 +18,26 @@ def main():
 
     # Data
     data = generate_data()
+    sort_after_id = None
+
+    def stop_sorting():
+        nonlocal data, sort_after_id
+        if sort_after_id is not None:
+            window.after_cancel(sort_after_id)
+            sort_after_id = None
+        # data = generate_data()
+        canvas.delete("all")
+        draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
     def reset_data():
-        nonlocal data
+        nonlocal data, sort_after_id
+        stop_sorting()
         data = generate_data()
         canvas.delete("all")
         draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
     def bubble_sort():
+        nonlocal sort_after_id
         data_len = len(data)
         step = [0, 0]  # [i, j] - aktualne indeksy
 
@@ -33,6 +45,7 @@ def main():
 
 
         def sort_step():
+            nonlocal sort_after_id
             if not data:
                 return
             i, j = step[0], step[1]
@@ -46,7 +59,7 @@ def main():
                 # przejdz do nastepnej iteracji
                 step[0] += 1
                 step[1] = 0
-                window.after(delay, sort_step)
+                sort_after_id = window.after(delay, sort_step)
                 return
 
 
@@ -57,12 +70,12 @@ def main():
             draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, j, j + 1)
 
             step[1] += 1
-            window.after(delay, sort_step)  # Delay for visualization
-
+            sort_after_id = window.after(delay, sort_step)
 
         sort_step()
 
     def quick_sort():  # implementacja za pomoca clauda - sprawdzic i nauczyc sie
+        nonlocal sort_after_id
         if not data:
             return
 
@@ -80,6 +93,7 @@ def main():
         }
 
         def sort_step():
+            nonlocal sort_after_id
             # Jeśli nie ma aktywnego partycjonowania, rozpocznij nowe
             if not partition_state['active']:
                 if not stack:
@@ -92,7 +106,7 @@ def main():
 
                 if low >= high:
                     # Zakres już posortowany
-                    window.after(delay, sort_step)
+                    sort_after_id = window.after(delay, sort_step)
                     return
 
                 # Rozpocznij partycjonowanie
@@ -105,7 +119,7 @@ def main():
 
                 # Podświetl pivot
                 draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, high, -1)
-                window.after(delay, sort_step)
+                sort_after_id = window.after(delay, sort_step)
                 return
 
             # Kontynuuj partycjonowanie
@@ -127,7 +141,7 @@ def main():
                 draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, j, high)
 
                 partition_state['j'] = j + 1
-                window.after(delay, sort_step)
+                sort_after_id = window.after(delay, sort_step)
             else:
                 # Zakończ partycjonowanie
                 # Umieść pivot w odpowiednim miejscu
@@ -146,7 +160,7 @@ def main():
                 # Zakończ partycjonowanie
                 partition_state['active'] = False
 
-                window.after(delay, sort_step)
+                sort_after_id = window.after(delay, sort_step)
 
         sort_step()
 
@@ -154,6 +168,7 @@ def main():
         return
 
     def bucket_sort(): #sth is not working in test.py working code, find whats wrong
+        nonlocal sort_after_id
         if not data:
             return
 
@@ -177,12 +192,13 @@ def main():
         }
 
         def sort_step():
+            nonlocal sort_after_id
             if state['phase'] == 'distribute':
                 # Phase 1: Distributing items into buckets
                 if state['current_item'] >= len(data):
                     state['phase'] = 'sort_buckets'
                     state['current_bucket'] = 0
-                    window.after(delay, sort_step)
+                    sort_after_id = window.after(delay, sort_step)
                     return
                 # Determine which bucket the item belongs to
                 item = data[state['current_item']]
@@ -198,7 +214,7 @@ def main():
                 draw_bars_with_highlight(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT, state['current_item'])
 
                 state['current_item'] += 1
-                window.after(delay, sort_step)  # Delay for visualization
+                sort_after_id = window.after(delay, sort_step)
 
             elif state['phase'] == 'sort_buckets':
 
@@ -206,13 +222,13 @@ def main():
                     # Phase 2: sorting each bucket
                     state['phase'] = 'collect'
                     state['current_bucket'] = 0
-                    window.after(delay, sort_step)
+                    sort_after_id = window.after(delay, sort_step)
                     return
                 # Sort the current bucket
                 if state['buckets'][state['current_bucket']]:
                     state['buckets'][state['current_bucket']].sort()
                 state['current_bucket'] += 1
-                window.after(delay, sort_step)  # Delay for visualization
+                sort_after_id = window.after(delay, sort_step)
 
             elif state['phase'] == 'collect':
                 # phase 3: Collecting sorted items from buckets
@@ -240,27 +256,35 @@ def main():
                 draw_bars(canvas, data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
                 state['current_bucket'] += 1
-                window.after(delay, sort_step)  # Delay for visualization
+                sort_after_id = window.after(delay, sort_step)
 
         sort_step()
 
 
 
     # Buttons
-    frame = tk.Frame(window)
-    frame.pack(pady=10)
+    sorting_frame = tk.Frame(window)
+    sorting_frame.pack(pady=1)
 
-    reset_button = tk.Button(frame, text="Reset", command=reset_data, bg="#808080", fg="white")
+    manipulation_frame = tk.Frame(window)
+    manipulation_frame.pack(pady=1)
+
+    reset_button = tk.Button(manipulation_frame, text="Reset", command=reset_data, bg="#808080")
     reset_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-    BubbleSort_button = tk.Button(frame, text="Bubble Sort", command=bubble_sort, bg="#008F11", fg="white")
+    stop_button = tk.Button(manipulation_frame, text="Stop", command=stop_sorting, bg="#808080")
+    stop_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+    BubbleSort_button = tk.Button(sorting_frame, text="Bubble Sort", command=bubble_sort, bg="#008F11")
     BubbleSort_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-    QuickSort_button = tk.Button(frame, text="Quick Sort", command=quick_sort, bg="#008F11", fg="white")
+    QuickSort_button = tk.Button(sorting_frame, text="Quick Sort", command=quick_sort, bg="#008F11",
+                                 state=tk.DISABLED)  # Quick Sort is not implemented yet
     QuickSort_button.pack(side=tk.LEFT, padx=5, pady=5)
-    MergeSort_button = tk.Button(frame, text="Merge Sort", command=merge_sort, bg="#008F11", fg="white")
+    MergeSort_button = tk.Button(sorting_frame, text="Merge Sort", command=merge_sort, bg="#008F11",
+                                 state=tk.DISABLED)  # Merge Sort is not implemented yet
     MergeSort_button.pack(side=tk.LEFT, padx=5, pady=5)
-    BucketSort_button = tk.Button(frame, text="Bucket Sort", command=bucket_sort, bg="#008F11", fg="white")
+    BucketSort_button = tk.Button(sorting_frame, text="Bucket Sort", command=bucket_sort, bg="#008F11")
     BucketSort_button.pack(side=tk.LEFT, padx=5, pady=5)
 
 
