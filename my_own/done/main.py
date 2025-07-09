@@ -318,8 +318,8 @@ def main():
                                  bg="#008F11")  # Quick Sort is not understood yet
     QuickSort_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-    MergeSort_button = tk.Button(sorting_frame, text="Merge Sort", command=merge_sort, bg="#008F11",
-                                 state=tk.DISABLED)  # Merge Sort is not implemented yet
+    MergeSort_button = tk.Button(sorting_frame, text="Merge Sort", command=merge_sort,
+                                 bg="#008F11")  # Merge Sort is not implemented yet
     MergeSort_button.pack(side=tk.LEFT, padx=5, pady=5)
 
     BucketSort_button = tk.Button(sorting_frame, text="Bucket Sort", command=bucket_sort, bg="#008F11")
@@ -332,7 +332,7 @@ def main():
     draw_bars(canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
     draw_bars(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT)
     draw_bars(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
-    # draw_bars(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
     # Loop
     window.mainloop()
