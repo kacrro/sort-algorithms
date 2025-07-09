@@ -15,4 +15,4 @@ a = 1   # Minimal value for the data
 b = 100 # Maximal value for the data
 RANGE = (a, b)
 
-delay = 1  # Delay in milliseconds for the sorting animation
+delay = 10  # Delay in milliseconds for the sorting animation

@@ -69,6 +69,7 @@ def main():
         bubble_sort()
         quick_sort()
         bucket_sort()
+        merge_sort()
 
     # Buttons
 
@@ -201,7 +202,77 @@ def main():
         sort_step()
 
     def merge_sort():
-        return
+        nonlocal sort_after_id
+        if not merge_data:
+            return
+
+        # Stos wywołań rekurencyjnych: (left, right, phase)
+        # phase: 'divide' - dzielenie, 'merge' - łączenie
+        call_stack = [(0, len(merge_data) - 1, 'divide')]
+
+        def sort_step():
+            nonlocal sort_after_id
+
+            if not call_stack:
+                # Sortowanie zakończone
+                draw_bars(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                return
+
+            left, right, phase = call_stack.pop()
+
+            if left >= right:
+                # Pojedynczy element - już posortowany
+                sort_after_id = window.after(delay, sort_step)
+                return
+
+            mid = (left + right) // 2
+
+            if phase == 'divide':
+                # Dodaj operację merge na koniec (będzie wykonana po podzieleniu)
+                call_stack.append((left, right, 'merge'))
+                # Dodaj dzielenie prawej części
+                call_stack.append((mid + 1, right, 'divide'))
+                # Dodaj dzielenie lewej części
+                call_stack.append((left, mid, 'divide'))
+
+                # Podświetl aktualnie dzielony fragment
+                draw_bars_with_highlight(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT, left, right)
+
+            elif phase == 'merge':
+                # Merge dwóch posortowanych części
+                left_part = merge_data[left:mid + 1].copy()
+                right_part = merge_data[mid + 1:right + 1].copy()
+
+                i = j = 0
+                k = left
+
+                # Merge
+                while i < len(left_part) and j < len(right_part):
+                    if left_part[i] <= right_part[j]:
+                        merge_data[k] = left_part[i]
+                        i += 1
+                    else:
+                        merge_data[k] = right_part[j]
+                        j += 1
+                    k += 1
+
+                # Dodaj pozostałe elementy
+                while i < len(left_part):
+                    merge_data[k] = left_part[i]
+                    i += 1
+                    k += 1
+
+                while j < len(right_part):
+                    merge_data[k] = right_part[j]
+                    j += 1
+                    k += 1
+
+                # Podświetl zmergowany fragment
+                draw_bars_with_highlight(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT, left, right)
+
+            sort_after_id = window.after(delay, sort_step)
+
+        sort_step()
 
     def bucket_sort(): #sth is not working in test.py working code, find whats wrong
         nonlocal sort_after_id
