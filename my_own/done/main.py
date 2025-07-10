@@ -19,22 +19,21 @@ def main():
     data_frame2.pack(pady=1)
 
 
-
     # Canvas
     bubble_canvas = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
-                       highlightbackground=border_color, highlightthickness=2)
+                              highlightbackground=border_color, highlightthickness=2)
     bubble_canvas.pack(side="right", padx=10, pady=10)
 
     quick_canvas = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
-                        highlightbackground=border_color, highlightthickness=2)
+                             highlightbackground=border_color, highlightthickness=2)
     quick_canvas.pack(side="right", padx=10, pady=10)
 
     bucket_canvas = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
-                        highlightbackground=border_color, highlightthickness=2)
+                              highlightbackground=border_color, highlightthickness=2)
     bucket_canvas.pack(side="right", padx=10, pady=10)
 
     merge_canvas = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
-                        highlightbackground=border_color, highlightthickness=2)
+                             highlightbackground=border_color, highlightthickness=2)
     merge_canvas.pack(side="right", padx=10, pady=10)
 
 
@@ -72,7 +71,6 @@ def main():
         quick_sort()
         bucket_sort()
         merge_sort()
-
     def bubble_sort():
         nonlocal sort_after_id
         data_len = len(bubble_data)
@@ -109,7 +107,6 @@ def main():
             sort_after_id = window.after(delay, sort_step)
 
         sort_step()
-
     def quick_sort():  # implementacja za pomoca clauda - sprawdzic i nauczyc sie
         nonlocal sort_after_id
         if not quick_data:
@@ -199,7 +196,6 @@ def main():
                 sort_after_id = window.after(delay, sort_step)
 
         sort_step()
-
     def merge_sort():
         nonlocal sort_after_id
         if not merge_data:
@@ -272,7 +268,6 @@ def main():
             sort_after_id = window.after(delay, sort_step)
 
         sort_step()
-
     def bucket_sort(): #sth is not working in test.py working code, find whats wrong
         nonlocal sort_after_id
         if not bucket_data:
@@ -366,21 +361,24 @@ def main():
 
         sort_step()
 
-
-
-    # Buttons
+    # Frames
     sorting_frame = tk.Frame(window, highlightbackground="white", highlightthickness=1)
     sorting_frame.pack(pady=1)
 
     manipulation_frame = tk.Frame(window, highlightbackground="white", highlightthickness=1)
     manipulation_frame.pack(pady=1)
 
+    # Buttons manpiulation
     reset_button = tk.Button(manipulation_frame, text="Reset", command=reset_data, bg="#808080")
     reset_button.pack(side="left", padx=5, pady=5)
 
     stop_button = tk.Button(manipulation_frame, text="Stop", command=stop_sorting, bg="#808080")
     stop_button.pack(side="left", padx=5, pady=5)
 
+    All_button = tk.Button(manipulation_frame, text="All", command=start_all_sorts, bg="#008F11")
+    All_button.pack(side="left", padx=5, pady=5)
+
+    # Buttons sorting
     BubbleSort_button = tk.Button(sorting_frame, text="Bubble Sort", command=bubble_sort, bg="#008F11")
     BubbleSort_button.pack(side="left", padx=5, pady=5)
 
@@ -395,8 +393,6 @@ def main():
     BucketSort_button = tk.Button(sorting_frame, text="Bucket Sort", command=bucket_sort, bg="#008F11")
     BucketSort_button.pack(side="left", padx=5, pady=5)
 
-    All_button = tk.Button(manipulation_frame, text="All", command=start_all_sorts, bg="#008F11")
-    All_button.pack(side="left", padx=5, pady=5)
 
     # Bars
     draw_bars(bubble_canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
