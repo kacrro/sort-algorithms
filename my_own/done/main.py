@@ -6,25 +6,23 @@ from my_own.done.data import generate_data
 
 
 def main():
-    border_color = "lightgreen"
     # Window
     window = tk.Tk()
     window.title(WINDOW_TITLE)
     window.geometry(WINDOW_SIZE)
 
     # Data
-    data = generate_data()
     bubble_data = generate_data()
     quick_data = generate_data()
     merge_data = generate_data()
     bucket_data = generate_data()
-    sort_after_id = None
+    sort_after_id = ""
 
     def stop_sorting():
         nonlocal data, sort_after_id
-        if sort_after_id is not None:
+        if sort_after_id is not "":
             window.after_cancel(sort_after_id)
-            sort_after_id = None
+            sort_after_id = ""
         # data = generate_data()
         # for c in (canvas, canvas2, canvas3, canvas4):
         #     c.delete("all")
@@ -364,8 +362,8 @@ def main():
     stop_button = tk.Button(button_frame, text="Stop", command=stop_sorting, bg="#808080")
     stop_button.pack(side="left", pady=10)
 
-    All_button = tk.Button(button_frame, text="All", command=start_all_sorts, bg="#008F11")
-    All_button.pack(side="left", pady=10)
+    all_button = tk.Button(button_frame, text="All", command=start_all_sorts, bg="#008F11")
+    all_button.pack(side="left", pady=10)
 
     # Buttons sorting
     btn_bubble = tk.Button(window, text="Bubble Sort", command=bubble_sort, bg="#008F11")
