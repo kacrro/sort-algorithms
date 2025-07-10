@@ -12,38 +12,6 @@ def main():
     window.title(WINDOW_TITLE)
     window.geometry(WINDOW_SIZE)
 
-    data_frame = tk.Frame(window, highlightbackground="red", highlightthickness=1)
-    data_frame.pack(pady=1)
-
-    data_frame2 = tk.Frame(window, highlightbackground="yellow", highlightthickness=1)
-    data_frame2.pack(pady=1)
-
-    bubble_frame = tk.Frame(data_frame, highlightbackground=border_color, highlightthickness=1)
-    quick_frame = tk.Frame(data_frame, highlightbackground=border_color, highlightthickness=1)
-    bucket_frame = tk.Frame(data_frame2, highlightbackground=border_color, highlightthickness=1)
-    merge_frame = tk.Frame(data_frame2, highlightbackground=border_color, highlightthickness=1)
-    bubble_frame.pack(padx=1, pady=1, side="left")
-    quick_frame.pack(padx=1, pady=1, side="right")
-    bucket_frame.pack(padx=1, pady=1, side="left")
-    merge_frame.pack(padx=1, pady=1, side="right")
-    # Canvas
-    bubble_canvas = tk.Canvas(bubble_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
-                              highlightbackground=border_color, highlightthickness=2)
-    bubble_canvas.pack(side="right", padx=10, pady=10)
-
-    quick_canvas = tk.Canvas(quick_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
-                             highlightbackground=border_color, highlightthickness=2)
-    quick_canvas.pack(side="right", padx=10, pady=10)
-
-    bucket_canvas = tk.Canvas(bucket_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
-                              highlightbackground=border_color, highlightthickness=2)
-    bucket_canvas.pack(side="right", padx=10, pady=10)
-
-    merge_canvas = tk.Canvas(merge_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
-                             highlightbackground=border_color, highlightthickness=2)
-    merge_canvas.pack(side="right", padx=10, pady=10)
-
-
     # Data
     data = generate_data()
     bubble_data = generate_data()
@@ -61,6 +29,7 @@ def main():
         # for c in (canvas, canvas2, canvas3, canvas4):
         #     c.delete("all")
         #     draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+
     def reset_data():
         nonlocal bubble_data, quick_data, merge_data, bucket_data, sort_after_id
         stop_sorting()
@@ -73,18 +42,19 @@ def main():
         for c in (bubble_canvas, quick_canvas, bucket_canvas, merge_canvas):
             c.delete("all")
             draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
+
     def start_all_sorts():
         bubble_sort()
         quick_sort()
         bucket_sort()
         merge_sort()
+
     def bubble_sort():
         nonlocal sort_after_id
         data_len = len(bubble_data)
         step = [0, 0]  # [i, j] - aktualne indeksy
 
         # i - indeks iteracji (ile danych juz przerobilismy), j - indeks porównywanego elementu
-
 
         def sort_step():
             nonlocal sort_after_id
@@ -114,6 +84,7 @@ def main():
             sort_after_id = window.after(delay, sort_step)
 
         sort_step()
+
     def quick_sort():  # implementacja za pomoca clauda - sprawdzic i nauczyc sie
         nonlocal sort_after_id
         if not quick_data:
@@ -203,6 +174,7 @@ def main():
                 sort_after_id = window.after(delay, sort_step)
 
         sort_step()
+
     def merge_sort():
         nonlocal sort_after_id
         if not merge_data:
@@ -275,11 +247,11 @@ def main():
             sort_after_id = window.after(delay, sort_step)
 
         sort_step()
-    def bucket_sort(): #sth is not working in test.py working code, find whats wrong
+
+    def bucket_sort():  # sth is not working in test.py working code, find whats wrong
         nonlocal sort_after_id
         if not bucket_data:
             return
-
 
         # parameters
         min_val = min(bucket_data)
@@ -310,11 +282,10 @@ def main():
                     return
                 # Determine which bucket the item belongs to
                 item = bucket_data[state['current_item']]
-                if item == max_val:                 # obslugujemy bo dzielimy potem przez to
+                if item == max_val:  # obslugujemy bo dzielimy potem przez to
                     bucket_index = bucket_count - 1
                 else:
                     bucket_index = int((item - min_val) / bucket_range)
-
 
                 state['buckets'][bucket_index].append(item)  # Add item to the bucket
 
@@ -354,7 +325,6 @@ def main():
                     if i < len(bucket_data):
                         bucket_data[i] = val
 
-
                 remaining_start = len(state['sorted_data'])
                 for i in range(remaining_start, len(bucket_data)):
                     if i < len(bucket_data):
@@ -368,38 +338,47 @@ def main():
 
         sort_step()
 
-    # Frames
-    sorting_frame = tk.Frame(window, highlightbackground="white", highlightthickness=1)
-    sorting_frame.pack(pady=1)
 
-    manipulation_frame = tk.Frame(window, highlightbackground="white", highlightthickness=1)
-    manipulation_frame.pack(pady=1)
+
+    # Canvas
+    bubble_canvas = tk.Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR)
+    bubble_canvas.grid(row=1, column=0, padx=10, pady=5)
+
+    quick_canvas = tk.Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR)
+    quick_canvas.grid(row=1, column=1, padx=10, pady=5)
+
+    merge_canvas = tk.Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR)
+    merge_canvas.grid(row=2, column=0, padx=10, pady=5)
+
+    bucket_canvas = tk.Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR)
+    bucket_canvas.grid(row=2, column=1, padx=10, pady=5)
+
 
     # Buttons manpiulation
-    reset_button = tk.Button(manipulation_frame, text="Reset", command=reset_data, bg="#808080")
-    reset_button.pack(side="left", padx=5, pady=5)
+    button_frame = tk.Frame(window)
+    button_frame.grid(row=4, column=0, columnspan=4)
 
-    stop_button = tk.Button(manipulation_frame, text="Stop", command=stop_sorting, bg="#808080")
-    stop_button.pack(side="left", padx=5, pady=5)
+    reset_button = tk.Button(button_frame, text="Reset", command=reset_data, bg="#808080")
+    reset_button.pack(side="left", pady=10)
 
-    All_button = tk.Button(manipulation_frame, text="All", command=start_all_sorts, bg="#008F11")
-    All_button.pack(side="left", padx=5, pady=5)
+    stop_button = tk.Button(button_frame, text="Stop", command=stop_sorting, bg="#808080")
+    stop_button.pack(side="left", pady=10)
+
+    All_button = tk.Button(button_frame, text="All", command=start_all_sorts, bg="#008F11")
+    All_button.pack(side="left", pady=10)
 
     # Buttons sorting
-    BubbleSort_button = tk.Button(sorting_frame, text="Bubble Sort", command=bubble_sort, bg="#008F11")
-    BubbleSort_button.pack(side="left", padx=5, pady=5)
+    btn_bubble = tk.Button(window, text="Bubble Sort", command=bubble_sort, bg="#008F11")
+    btn_bubble.grid(row=0, column=0, pady=5)
 
-    QuickSort_button = tk.Button(sorting_frame, text="Quick Sort", command=quick_sort,
-                                 bg="#008F11")  # Quick Sort is not understood yet
-    QuickSort_button.pack(side="left", padx=5, pady=5)
+    btn_quick = tk.Button(window, text="Quick Sort", command=quick_sort, bg="#008F11")
+    btn_quick.grid(row=0, column=1, pady=5)
 
-    MergeSort_button = tk.Button(sorting_frame, text="Merge Sort", command=merge_sort,
-                                 bg="#008F11")  # Merge Sort is not understood yet
-    MergeSort_button.pack(side="left", padx=5, pady=5)
+    btn_merge = tk.Button(window, text="Merge Sort", command=merge_sort, bg="#008F11")
+    btn_merge.grid(row=3, column=0, pady=5)
 
-    BucketSort_button = tk.Button(sorting_frame, text="Bucket Sort", command=bucket_sort, bg="#008F11")
-    BucketSort_button.pack(side="left", padx=5, pady=5)
-
+    btn_bucket = tk.Button(window, text="Bucket Sort", command=bucket_sort, bg="#008F11")
+    btn_bucket.grid(row=3, column=1, pady=5)
 
     # Bars
     draw_bars(bubble_canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
