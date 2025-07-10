@@ -6,35 +6,38 @@ from my_own.done.data import generate_data
 
 
 def main():
-
+    border_color = "lightgreen"
     # Window
     window = tk.Tk()
     window.title(WINDOW_TITLE)
     window.geometry(WINDOW_SIZE)
 
-    data_frame = tk.Frame(window)
+    data_frame = tk.Frame(window, highlightbackground="red", highlightthickness=1)
     data_frame.pack(pady=1)
-    data_frame2 = tk.Frame(window)
+
+    data_frame2 = tk.Frame(window, highlightbackground="yellow", highlightthickness=1)
     data_frame2.pack(pady=1)
 
-    border_color = "lightgreen"
+
 
     # Canvas
-    canvas = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+    bubble_canvas = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
                        highlightbackground=border_color, highlightthickness=2)
-    canvas.pack(side="right", padx=10, pady=10)
+    bubble_canvas.pack(side="right", padx=10, pady=10)
 
-    canvas2 = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+    quick_canvas = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
                         highlightbackground=border_color, highlightthickness=2)
-    canvas2.pack(side="right", padx=10, pady=10)
+    quick_canvas.pack(side="right", padx=10, pady=10)
 
-    canvas3 = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+    bucket_canvas = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
                         highlightbackground=border_color, highlightthickness=2)
-    canvas3.pack(side="right", padx=10, pady=10)
+    bucket_canvas.pack(side="right", padx=10, pady=10)
 
-    canvas4 = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+    merge_canvas = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
                         highlightbackground=border_color, highlightthickness=2)
-    canvas4.pack(side="right", padx=10, pady=10)
+    merge_canvas.pack(side="right", padx=10, pady=10)
+
+
     # Data
     data = generate_data()
     bubble_data = generate_data()
@@ -61,18 +64,14 @@ def main():
         quick_data = generate_data()
         merge_data = generate_data()
         bucket_data = generate_data()
-        for c in (canvas, canvas2, canvas3, canvas4):
+        for c in (bubble_canvas, quick_canvas, bucket_canvas, merge_canvas, data_frame, data_frame2):
             c.delete("all")
             draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
-
     def start_all_sorts():
         bubble_sort()
         quick_sort()
         bucket_sort()
         merge_sort()
-
-    # Buttons
-
 
     def bubble_sort():
         nonlocal sort_after_id
@@ -90,7 +89,7 @@ def main():
 
             if i >= data_len - 1:
                 # Sortowanie zakończone
-                draw_bars(canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                draw_bars(bubble_canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
                 return
 
             if j >= data_len - 1 - i:  # jeśli j jest większe niż długość - już posortowane to ...
@@ -104,7 +103,7 @@ def main():
                 # zmien elementy
                 bubble_data[j], bubble_data[j + 1] = bubble_data[j + 1], bubble_data[j]
 
-            draw_bars_with_highlight(canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT, j, j + 1)
+            draw_bars_with_highlight(bubble_canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT, j, j + 1)
 
             step[1] += 1
             sort_after_id = window.after(delay, sort_step)
@@ -135,7 +134,7 @@ def main():
             if not partition_state['active']:
                 if not stack:
                     # Sortowanie zakończone
-                    draw_bars(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                    draw_bars(quick_canvas, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT)
                     return
 
                 # Pobierz następny zakres
@@ -155,7 +154,7 @@ def main():
                 partition_state['j'] = low
 
                 # Podświetl pivot
-                draw_bars_with_highlight(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, high, -1)
+                draw_bars_with_highlight(quick_canvas, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, high, -1)
                 sort_after_id = window.after(delay, sort_step)
                 return
 
@@ -175,7 +174,7 @@ def main():
                     partition_state['i'] = i
 
                 # Podświetl porównywane elementy
-                draw_bars_with_highlight(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, j, high)
+                draw_bars_with_highlight(quick_canvas, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, j, high)
 
                 partition_state['j'] = j + 1
                 sort_after_id = window.after(delay, sort_step)
@@ -186,7 +185,7 @@ def main():
                 pivot_pos = i + 1
 
                 # Podświetl pivot w końcowej pozycji
-                draw_bars_with_highlight(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, pivot_pos, -1)
+                draw_bars_with_highlight(quick_canvas, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT, pivot_pos, -1)
 
                 # Dodaj nowe zakresy do sortowania
                 if pivot_pos - 1 > low:
@@ -215,7 +214,7 @@ def main():
 
             if not call_stack:
                 # Sortowanie zakończone
-                draw_bars(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                draw_bars(merge_canvas, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
                 return
 
             left, right, phase = call_stack.pop()
@@ -236,7 +235,7 @@ def main():
                 call_stack.append((left, mid, 'divide'))
 
                 # Podświetl aktualnie dzielony fragment
-                draw_bars_with_highlight(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT, left, right)
+                draw_bars_with_highlight(merge_canvas, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT, left, right)
 
             elif phase == 'merge':
                 # Merge dwóch posortowanych części
@@ -268,7 +267,7 @@ def main():
                     k += 1
 
                 # Podświetl zmergowany fragment
-                draw_bars_with_highlight(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT, left, right)
+                draw_bars_with_highlight(merge_canvas, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT, left, right)
 
             sort_after_id = window.after(delay, sort_step)
 
@@ -318,7 +317,7 @@ def main():
                 state['buckets'][bucket_index].append(item)  # Add item to the bucket
 
                 # Highlight the current item being processed
-                draw_bars_with_highlight(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT, state['current_item'])
+                draw_bars_with_highlight(bucket_canvas, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT, state['current_item'])
 
                 state['current_item'] += 1
                 sort_after_id = window.after(delay, sort_step)
@@ -341,7 +340,7 @@ def main():
                 # phase 3: Collecting sorted items from buckets
                 if state['current_bucket'] >= bucket_count:
                     # All buckets processed, draw the final sorted data
-                    draw_bars(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                    draw_bars(bucket_canvas, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
                     return
 
                 # Collect items from the current bucket
@@ -360,7 +359,7 @@ def main():
                         bucket_data[i] = 0
 
                 # Draw the updated bars
-                draw_bars(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+                draw_bars(bucket_canvas, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
                 state['current_bucket'] += 1
                 sort_after_id = window.after(delay, sort_step)
@@ -370,40 +369,40 @@ def main():
 
 
     # Buttons
-    sorting_frame = tk.Frame(window)
+    sorting_frame = tk.Frame(window, highlightbackground="white", highlightthickness=1)
     sorting_frame.pack(pady=1)
 
-    manipulation_frame = tk.Frame(window)
+    manipulation_frame = tk.Frame(window, highlightbackground="white", highlightthickness=1)
     manipulation_frame.pack(pady=1)
 
     reset_button = tk.Button(manipulation_frame, text="Reset", command=reset_data, bg="#808080")
-    reset_button.pack(side=tk.LEFT, padx=5, pady=5)
+    reset_button.pack(side="left", padx=5, pady=5)
 
     stop_button = tk.Button(manipulation_frame, text="Stop", command=stop_sorting, bg="#808080")
-    stop_button.pack(side=tk.LEFT, padx=5, pady=5)
+    stop_button.pack(side="left", padx=5, pady=5)
 
     BubbleSort_button = tk.Button(sorting_frame, text="Bubble Sort", command=bubble_sort, bg="#008F11")
-    BubbleSort_button.pack(side=tk.LEFT, padx=5, pady=5)
+    BubbleSort_button.pack(side="left", padx=5, pady=5)
 
     QuickSort_button = tk.Button(sorting_frame, text="Quick Sort", command=quick_sort,
                                  bg="#008F11")  # Quick Sort is not understood yet
-    QuickSort_button.pack(side=tk.LEFT, padx=5, pady=5)
+    QuickSort_button.pack(side="left", padx=5, pady=5)
 
     MergeSort_button = tk.Button(sorting_frame, text="Merge Sort", command=merge_sort,
-                                 bg="#008F11")  # Merge Sort is not implemented yet
-    MergeSort_button.pack(side=tk.LEFT, padx=5, pady=5)
+                                 bg="#008F11")  # Merge Sort is not understood yet
+    MergeSort_button.pack(side="left", padx=5, pady=5)
 
     BucketSort_button = tk.Button(sorting_frame, text="Bucket Sort", command=bucket_sort, bg="#008F11")
-    BucketSort_button.pack(side=tk.LEFT, padx=5, pady=5)
+    BucketSort_button.pack(side="left", padx=5, pady=5)
 
     All_button = tk.Button(manipulation_frame, text="All", command=start_all_sorts, bg="#008F11")
-    All_button.pack(side=tk.LEFT, padx=5, pady=5)
+    All_button.pack(side="left", padx=5, pady=5)
 
     # Bars
-    draw_bars(canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
-    draw_bars(canvas2, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT)
-    draw_bars(canvas3, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
-    draw_bars(canvas4, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(bubble_canvas, bubble_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(quick_canvas, quick_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(bucket_canvas, bucket_data, CANVAS_WIDTH, CANVAS_HEIGHT)
+    draw_bars(merge_canvas, merge_data, CANVAS_WIDTH, CANVAS_HEIGHT)
 
     # Loop
     window.mainloop()
