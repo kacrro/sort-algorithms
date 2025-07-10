@@ -18,21 +18,28 @@ def main():
     data_frame2 = tk.Frame(window, highlightbackground="yellow", highlightthickness=1)
     data_frame2.pack(pady=1)
 
-
+    bubble_frame = tk.Frame(data_frame, highlightbackground=border_color, highlightthickness=1)
+    quick_frame = tk.Frame(data_frame, highlightbackground=border_color, highlightthickness=1)
+    bucket_frame = tk.Frame(data_frame2, highlightbackground=border_color, highlightthickness=1)
+    merge_frame = tk.Frame(data_frame2, highlightbackground=border_color, highlightthickness=1)
+    bubble_frame.pack(padx=1, pady=1, side="left")
+    quick_frame.pack(padx=1, pady=1, side="right")
+    bucket_frame.pack(padx=1, pady=1, side="left")
+    merge_frame.pack(padx=1, pady=1, side="right")
     # Canvas
-    bubble_canvas = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+    bubble_canvas = tk.Canvas(bubble_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
                               highlightbackground=border_color, highlightthickness=2)
     bubble_canvas.pack(side="right", padx=10, pady=10)
 
-    quick_canvas = tk.Canvas(data_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+    quick_canvas = tk.Canvas(quick_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
                              highlightbackground=border_color, highlightthickness=2)
     quick_canvas.pack(side="right", padx=10, pady=10)
 
-    bucket_canvas = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+    bucket_canvas = tk.Canvas(bucket_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
                               highlightbackground=border_color, highlightthickness=2)
     bucket_canvas.pack(side="right", padx=10, pady=10)
 
-    merge_canvas = tk.Canvas(data_frame2, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
+    merge_canvas = tk.Canvas(merge_frame, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg=WINDOW_BG_COLOR, borderwidth=3,
                              highlightbackground=border_color, highlightthickness=2)
     merge_canvas.pack(side="right", padx=10, pady=10)
 
@@ -63,7 +70,7 @@ def main():
         quick_data = generate_data()
         merge_data = generate_data()
         bucket_data = generate_data()
-        for c in (bubble_canvas, quick_canvas, bucket_canvas, merge_canvas, data_frame, data_frame2):
+        for c in (bubble_canvas, quick_canvas, bucket_canvas, merge_canvas):
             c.delete("all")
             draw_bars(c, data, CANVAS_WIDTH, CANVAS_HEIGHT)
     def start_all_sorts():
